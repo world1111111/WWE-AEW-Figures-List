@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Women’s Wrestling Figures List</title>
+  <style>
+    :root {
+      --bg: #f7f8fc;
+      --panel: #ffffff;
+      --panel-2: #eef3ff;
+      --primary: #4f7cff;
+      --primary-dark: #355fe6;
+      --text: #1d2433;
+      --muted: #667085;
+      --border: #e8ebf5;
+      --shadow: 0 12px 30px rgba(77, 99, 170, 0.12);
+      --card-radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(180deg, #fdfdff 0%, #f4f7ff 100%);
+      color: var(--text);
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 18px 48px;
+    }
+
+    .header {
+      margin-bottom: 26px;
+    }
+
+    .title {
+      margin: 0 0 8px;
+      font-size: clamp(1.8rem, 3vw, 3rem);
+      line-height: 1.2;
+      letter-spacing: 0.02em;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 22px 0 26px;
+      align-items: center;
+    }
+
+    .filter-group {
+      display: inline-flex;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px;
+      box-shadow: var(--shadow);
+      overflow-x: auto;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .filter-group::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-btn {
+      border: none;
+      background: transparent;
+      color: var(--text);
+      padding: 11px 20px;
+      border-radius: 999px;
+      font-size: 0.96rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .filter-btn.active {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      box-shadow: 0 8px 20px rgba(79, 124, 255, 0.25);
+    }
+
+    .filter-btn:hover {
+      background: #edf3ff;
+    }
+
+    .filter-btn.active:hover {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    }
+
+    .stats {
+      margin-left: auto;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px 14px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      box-shadow: var(--shadow);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--card-radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 36px rgba(77, 99, 170, 0.14);
+    }
+
+    .image-wrap {
+      position: relative;
+      background: linear-gradient(180deg, #eef3ff 0%, #f7f9ff 100%);
+      aspect-ratio: 4 / 5;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .figure-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      background: #f6f8ff;
+    }
+
+    .brand-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--text);
+      border: 1px solid rgba(136, 150, 180, 0.18);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .card-body {
+      padding: 16px 16px 18px;
+    }
+
+    .figure-name {
+      margin: 0 0 10px;
+      font-size: 1.02rem;
+      font-weight: 800;
+      line-height: 1.45;
+      min-height: 48px;
+    }
+
+    .meta {
+      display: grid;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .meta-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      border-top: 1px solid #f0f2f7;
+      padding-top: 8px;
+    }
+
+    .meta-label {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .empty-state {
+      display: none;
+      margin-top: 20px;
+      text-align: center;
+      background: var(--panel);
+      border: 1px dashed var(--border);
+      border-radius: 18px;
+      padding: 42px 20px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .empty-state.visible {
+      display: block;
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .controls {
+        align-items: stretch;
+      }
+
+      .filter-group {
+        width: 100%;
+      }
+
+      .filter-btn {
+        flex: 1;
+        text-align: center;
+      }
+
+      .stats {
+        width: 100%;
+        margin-left: 0;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .figure-name {
+        min-height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <h1 class="title">Women’s Wrestling Figures List</h1>
+      <p class="subtitle">Mattel WWE &amp; Jazwares AEW Women’s Figure Collection</p>
+    </header>
+
+    <div class="controls">
+      <div class="filter-group" aria-label="Figure filter">
+        <button class="filter-btn active" data-filter="all" type="button">All</button>
+        <button class="filter-btn" data-filter="mattel" type="button">Mattel WWE</button>
+        <button class="filter-btn" data-filter="jazwares" type="button">Jazwares AEW</button>
+      </div>
+
+      <div class="stats" id="stats">Total: 0</div>
+    </div>
+
+    <main>
+      <div class="cards" id="figureGrid"></div>
+      <div class="empty-state" id="emptyState">No figures match the selected filter.</div>
+    </main>
+  </div>
+
+  <script>
+    const figures = [
+      {
+        name: "Becky Lynch",
+        brand: "Mattel WWE",
+        year: 2024,
+        outfitDate: "2024-04-05",
+        image: "https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        name: "Charlotte Flair",
+        brand: "Mattel WWE",
+        year: 2023,
+        outfitDate: "2023-11-18",
+        image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        name: "Rhea Ripley",
+        brand: "Mattel WWE",
+        year: 2024,
+        outfitDate: "2024-02-14",
+        image: "https://images.unsplash.com/photo-1521119989659-a83eee488004?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        name: "Bayley",
+        brand: "Mattel WWE",
+        year: 2022,
+        outfitDate: "2022-08-30",
+        image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        name: "Bianca Belair",
+        brand: "Mattel WWE",
+        year: 2023,
+        outfitDate: "2023-09-07",
+        image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        name: "Sasha Banks",
+        brand: "Mattel WWE",
+        year: 2021,
+        outfitDate: "2021-12-11",
+        image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        name: "Liv Morgan",
+        brand: "Mattel WWE",
+        year: 2025,
+        outfitDate: "2025-03-19",
+        image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        name: "Iyo Sky",
+        brand: "Mattel WWE",
+        year: 2024,
+        outfitDate: "2024-06-28",
+        image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        name: "Toni Storm",
+        brand: "Jazwares AEW",
+        year: 2022,
+        outfitDate: "2022-10-12",
+        image: "https://images.unsplash.com/photo-1554151228-14d9def656e4?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        name: "Dr. Britt Baker DMD",
+        brand: "Jazwares AEW",
+        year: 2023,
+        outfitDate: "2023-08-18",
+        image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        name: "Ruby Soho",
+        brand: "Jazwares AEW",
+        year: 2024,
+        outfitDate: "2024-01-22",
+        image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        name: "Jamie Hayter",
+        brand: "Jazwares AEW",
+        year: 2023,
+        outfitDate: "2023-06-24",
+        image: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        name: "Thunder Rosa",
+        brand: "Jazwares AEW",
+        year: 2022,
+        outfitDate: "2022-04-08",
+        image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        name: "Skye Blue",
+        brand: "Jazwares AEW",
+        year: 2025,
+        outfitDate: "2025-02-17",
+        image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        name: "Saraya",
+        brand: "Jazwares AEW",
+        year: 2024,
+        outfitDate: "2024-09-30",
+        image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        name: "Hikaru Shida",
+        brand: "Jazwares AEW",
+        year: 2023,
+        outfitDate: "2023-12-15",
+        image: "https://images.unsplash.com/photo-1521119989659-a83eee488004?auto=format&fit=crop&w=900&q=80"
+      }
+    ];
+
+    const grid = document.getElementById("figureGrid");
+    const stats = document.getElementById("stats");
+    const emptyState = document.getElementById("emptyState");
+    const filterButtons = document.querySelectorAll(".filter-btn");
+
+    let currentFilter = "all";
+
+    function getBrandKey(brand) {
+      return brand === "Mattel WWE" ? "mattel" : "jazwares";
+    }
+
+    function formatDate(dateString) {
+      const date = new Date(dateString + "T00:00:00");
+      return new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      }).format(date);
+    }
+
+    function renderFigures() {
+      const filtered = figures.filter((figure) => {
+        if (currentFilter === "all") return true;
+        return getBrandKey(figure.brand) === currentFilter;
+      });
+
+      grid.innerHTML = "";
+
+      filtered.forEach((figure) => {
+        const card = document.createElement("article");
+        card.className = "card";
+
+        card.innerHTML = `
+          <div class="image-wrap">
+            <span class="brand-badge">${figure.brand}</span>
+            <img
+              class="figure-image"
+              src="${figure.image}"
+              alt="${figure.name}"
+              loading="lazy"
+            />
+          </div>
+          <div class="card-body">
+            <h2 class="figure-name">${figure.name}</h2>
+            <div class="meta">
+              <div class="meta-item">
+                <span class="meta-label">Release Year</span>
+                <span>${figure.year}</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Outfit Date</span>
+                <span>${formatDate(figure.outfitDate)}</span>
+              </div>
+            </div>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+
+      stats.textContent = `Total: ${filtered.length}`;
+
+      if (filtered.length === 0) {
+        emptyState.classList.add("visible");
+      } else {
+        emptyState.classList.remove("visible");
+      }
+    }
+
+    filterButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        currentFilter = button.dataset.filter;
+        filterButtons.forEach((btn) => {
+          btn.classList.toggle("active", btn === button);
+        });
+        renderFigures();
+      });
+    });
+
+    renderFigures();
+  </script>
+</body>
+</html>
